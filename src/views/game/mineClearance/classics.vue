@@ -1,27 +1,27 @@
 <template>
   <div class="mine-clearance">
-    <transition name="fade" v-if="mineState.isShow">
-      <div class="mine-clearance-option">
-        <div>
-          <span>选择难度：</span>
-          <el-select
-            v-model="difficulty"
-            class="m-2"
-            placeholder="Select"
-            size="large"
-          >
-            <el-option
-              v-for="item in options"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
-            />
-          </el-select>
-        </div>
-        <div class="flag-count">{{ mineState.flagCount }}</div>
+    <div class="mine-clearance-option">
+      <div>
+        <span>选择难度：</span>
+        <el-select
+          v-model="difficulty"
+          class="m-2"
+          placeholder="Select"
+          size="large"
+        >
+          <el-option
+            v-for="item in options"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value"
+          />
+        </el-select>
       </div>
-      <div class="mine-clearance-content">
-        <ul>
+      <div class="flag-count">{{ mineState.flagCount }}</div>
+    </div>
+    <div class="mine-clearance-content">
+      <transition name="fade">
+        <ul v-if="mineState.isShow">
           <li
             v-for="item in boxList"
             :key="item.id"
@@ -30,8 +30,8 @@
             @mousedown="mouseDown($event, item.id)"
           ></li>
         </ul>
-      </div>
-    </transition>
+      </transition>
+    </div>
   </div>
 </template>
 
