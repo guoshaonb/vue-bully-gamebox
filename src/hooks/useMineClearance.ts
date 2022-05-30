@@ -1,5 +1,6 @@
 import { onBeforeUnmount, onMounted, reactive, watch, toRaw, type Ref, nextTick } from 'vue'
 import { ElMessage } from 'element-plus'
+import _ from "lodash";
 import { hasClass, addClass, removeClass } from './../utlis/classTool'
 
 // 类型检查
@@ -27,6 +28,7 @@ export default function (optionProps: optionType) {
   // 雷盘属性
   const itemSize = ref(optionProps.itemSize);
   const boxProps = computed(() => {
+    reset()
     const count_x = options[difficulty.value].count_x;
     const count_y = options[difficulty.value].count_y;
     return {
@@ -37,7 +39,6 @@ export default function (optionProps: optionType) {
 
   // 雷盘数据
   const boxList = computed(() => {
-    reset()
     let boxList = [];
     let isLeiCount = 0;
     const count_x = options[difficulty.value].count_x;
@@ -121,7 +122,9 @@ export default function (optionProps: optionType) {
       }
     }
     addClass(id, 'num')
-    elem.innerHTML = leiCount
+    if(elem) {
+      elem.innerHTML = leiCount
+    }
     // 周围一圈找雷
     if (leiCount == 0) {
       for (let i = indexX - 1; i <= indexX + 1; i++) {
@@ -154,14 +157,17 @@ export default function (optionProps: optionType) {
   }
 
   // 雷盘操作
-  const mouseDown = function (e: any, id: string) {
+  const mouseDown = _.throttle(function (e: any, id: string) {
+    if(!mineState.isShow) {
+      return false
+    }
     e.preventDefault()
     if (e.which === 1) {
       clickEvent(id)
     } else if (e.which === 3) {
       flagEvent(id)
     }
-  }
+  },500)
 
   onMounted(() => {
     // 初始化设置
