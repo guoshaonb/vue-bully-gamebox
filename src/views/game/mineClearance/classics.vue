@@ -75,7 +75,6 @@ const {
   options,
   itemSize,
   boxProps,
-  boxList,
 } = useMineClearance(optionProps);
 </script>
 
