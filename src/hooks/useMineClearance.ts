@@ -148,13 +148,13 @@ export default function (optionProps: optionType) {
     for (const item in leiAll) {
       addClass(leiAll[item].id, 'lei')
     }
-    await delay(300)
+    await delay(200)
     reset()
   }
 
   // 鼠标左键 -- 点击事件
   const clickEvent = async (id: string) => {
-    await delay(100)
+    await delay(50)
     if (hasClass(id, 'flag')) {
       return
     }
@@ -224,7 +224,7 @@ export default function (optionProps: optionType) {
     } else if (e.which === 3) {
       flagEvent(id)
     }
-  }, 500)
+  }, 300)
 
   onMounted(() => {
     document.oncontextmenu = () => false
