@@ -1,4 +1,4 @@
-import { onBeforeUnmount, onMounted, reactive, watch, toRaw, type Ref, nextTick } from 'vue'
+import { onBeforeUnmount, onMounted, onUnmounted, reactive, watch, toRaw, type Ref, nextTick } from 'vue'
 import { ElMessage } from 'element-plus'
 import _ from "lodash";
 import { hasClass, addClass, removeClass } from './../utlis/classTool'
@@ -7,18 +7,37 @@ import { hasClass, addClass, removeClass } from './../utlis/classTool'
 type stateType = {
   flagCount: number,
   isShow: boolean,
+  boxList: Array<any>,
+  timeObj: { timer: any, duration: string, n_sec: number, n_min: number, n_hour: number },
+}
+
+interface optionsItem {
+  value: number,
+  label: string,
+  count_x: number,
+  count_y: number,
+  leiCount: number,
+  leiOdds: number
 }
 
 type optionType = {
-  options: Array<{ value: number, label: string, count_x: number, count_y: number, leiCount: number, leiOdds: number }>,
+  options: Array<optionsItem>,
   itemSize: string
 }
 
 export default function (optionProps: optionType) {
   // 初始化状态
   let mineState = reactive<stateType>({
-    flagCount: 10,
-    isShow: true
+    flagCount: 0,
+    isShow: true,
+    boxList: [],
+    timeObj: {
+      timer: null,
+      duration: "00:00:00",
+      n_sec: 0,
+      n_min: 0,
+      n_hour: 0
+    }
   })
 
   // 难度选项
@@ -37,8 +56,8 @@ export default function (optionProps: optionType) {
     };
   });
 
-  // 雷盘数据
-  const boxList = computed(() => {
+  // 初始化雷盘
+  const getBoxList = () => {
     let boxList = [];
     let isLeiCount = 0;
     const count_x = options[difficulty.value].count_x;
@@ -62,7 +81,7 @@ export default function (optionProps: optionType) {
       }
     } while (isLeiCount != leiCount);
     return boxList;
-  });
+  }
 
   // 时钟延迟
   let timer: any = null;
@@ -75,12 +94,50 @@ export default function (optionProps: optionType) {
     })
   }
 
+  // 记时方法
+  function timing() {
+    let { n_sec, n_min, n_hour } = mineState.timeObj
+    let str_sec: any = n_sec;
+    let str_min: any = n_min;
+    let str_hour: any = n_hour;
+
+    if (n_sec < 10) {
+      str_sec = "0" + n_sec;
+    }
+    if (n_min < 10) {
+      str_min = "0" + n_min;
+    }
+
+    if (n_hour < 10) {
+      str_hour = "0" + n_hour;
+    }
+
+    var time = str_hour + ":" + str_min + ":" + str_sec;
+    mineState.timeObj.duration = time;
+    mineState.timeObj.n_sec++;
+    if (n_sec > 59) {
+      mineState.timeObj.n_sec = 0;
+      mineState.timeObj.n_min++;
+    }
+    if (n_min > 59) {
+      mineState.timeObj.n_sec = 0;
+      mineState.timeObj.n_hour++;
+    }
+  }
+
   // 雷盘重置
   const reset = async () => {
-    Object.assign(mineState, {
-      isShow: false,
-      flagCount: options[difficulty.value].leiCount
-    })
+    clearInterval(mineState.timeObj.timer)
+    mineState.isShow = false
+    mineState.flagCount = options[difficulty.value].leiCount
+    mineState.boxList = getBoxList()
+    mineState.timeObj = {
+      timer: setInterval(timing, 1000),
+      duration: "00:00:00",
+      n_sec: 0,
+      n_min: 0,
+      n_hour: 0
+    }
     await delay(500)
     mineState.isShow = true
   }
@@ -91,11 +148,11 @@ export default function (optionProps: optionType) {
     for (const item in leiAll) {
       addClass(leiAll[item].id, 'lei')
     }
-    await delay(500)
-    window.location.reload()
+    await delay(300)
+    reset()
   }
 
-  // 点击事件
+  // 鼠标左键 -- 点击事件
   const clickEvent = async (id: string) => {
     await delay(100)
     if (hasClass(id, 'flag')) {
@@ -122,7 +179,7 @@ export default function (optionProps: optionType) {
       }
     }
     addClass(id, 'num')
-    if(elem) {
+    if (elem) {
       elem.innerHTML = leiCount
     }
     // 周围一圈找雷
@@ -136,7 +193,7 @@ export default function (optionProps: optionType) {
     }
   }
 
-  // 插旗事件
+  // 鼠标右键 -- 插旗事件
   const flagEvent = function (id: string) {
     if (!hasClass(id, 'flag')) {
       if (mineState.flagCount == 0) {
@@ -158,7 +215,7 @@ export default function (optionProps: optionType) {
 
   // 雷盘操作
   const mouseDown = _.throttle(function (e: any, id: string) {
-    if(!mineState.isShow) {
+    if (!mineState.isShow) {
       return false
     }
     e.preventDefault()
@@ -167,16 +224,17 @@ export default function (optionProps: optionType) {
     } else if (e.which === 3) {
       flagEvent(id)
     }
-  },500)
+  }, 500)
 
   onMounted(() => {
-    // 初始化设置
-    document.oncontextmenu = function () {
-      return false
-    }
+    document.oncontextmenu = () => false
+  })
+
+  onUnmounted(() => {
+    clearInterval(mineState.timeObj.timer)
   })
 
   return {
-    mouseDown, mineState, difficulty, options, itemSize, boxProps, boxList
+    mouseDown, mineState, difficulty, options, itemSize, boxProps
   }
 }

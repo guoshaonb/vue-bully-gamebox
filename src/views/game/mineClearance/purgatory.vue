@@ -18,20 +18,21 @@
         </el-select>
       </div>
       <div class="flag-count">{{ mineState.flagCount }}</div>
+      <div class="cost-time">用时：{{ mineState.timeObj.duration }}</div>
     </div>
-    <div class="mine-clearance-content">
-      <transition name="fade">
+    <transition name="fade">
+      <div class="mine-clearance-content">
         <ul v-if="mineState.isShow">
           <li
-            v-for="item in boxList"
+            v-for="item in mineState.boxList"
             :key="item.id"
             :id="item.id"
             :class="{ 'is-lei': item.isLei }"
             @mousedown="mouseDown($event, item.id)"
           ></li>
         </ul>
-      </transition>
-    </div>
+      </div>
+    </transition>
   </div>
 </template>
 
@@ -95,6 +96,9 @@ const {
       background: url("./images/hongqi.jpg") no-repeat center center;
       background-size: 100% 100%;
     }
+    .cost-time {
+      margin: 5px 0 0 20px;
+    }
   }
   &-content {
     height: calc(100% - 40px);
@@ -109,7 +113,7 @@ const {
       li {
         width: v-bind(itemSize);
         height: v-bind(itemSize);
-        background-color: #ccc;
+        background-color: grey;
         box-sizing: border-box;
         border: 1px solid #e2e2e2;
         text-align: center;
@@ -133,7 +137,7 @@ const {
   // 动画
   .fade-enter-from,
   .fade-leave-to {
-   opacity: 0;
+    opacity: 0;
   }
 
   .fade-enter-to,
