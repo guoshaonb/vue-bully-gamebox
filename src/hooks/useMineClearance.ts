@@ -160,7 +160,7 @@ export default function (optionProps: optionType) {
     // 判断是否踩雷了
     if (hasClass(id, 'is-lei')) {
       gameOver()
-      return ElMessage.error('踩到雷了，游戏结束')
+      return ElMessage.error(`踩到雷了，游戏结束！用时：${mineState.timeObj.duration}`)
     }
     const elem: any = document.querySelector(`#${id}`)
     const count_x = options[difficulty.value].count_x;
