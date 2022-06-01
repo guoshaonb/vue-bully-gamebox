@@ -143,13 +143,16 @@ export default function (optionProps: optionType) {
   }
 
   // 游戏结束
-  const gameOver = async () => {
-    const leiAll = document.querySelectorAll(".is-lei")
-    for (const item in leiAll) {
-      addClass(leiAll[item].id, 'lei')
+  const gameOver = async (title: string) => {
+    if (title == "over") {
+      const leiAll = document.querySelectorAll(".is-lei")
+      for (const item in leiAll) {
+        addClass(leiAll[item].id, 'lei')
+      }
+
     }
     await delay(300)
-    reset()
+    await reset()
   }
 
   // 鼠标左键 -- 点击事件
@@ -159,7 +162,7 @@ export default function (optionProps: optionType) {
     }
     // 判断是否踩雷了
     if (hasClass(id, 'is-lei')) {
-      gameOver()
+      gameOver('over')
       return ElMessage.error(`踩到雷了，游戏结束！`)
     }
     const elem: any = document.querySelector(`#${id}`)
@@ -208,7 +211,7 @@ export default function (optionProps: optionType) {
     const leiCount = options[difficulty.value].leiCount
     const leiFlagLen = document.querySelectorAll(".is-lei.flag").length
     if (leiCount == leiFlagLen) {
-      gameOver()
+      gameOver('win')
       return ElMessage.success(`恭喜你，游戏成功！用时：${mineState.timeObj.duration}`)
     }
   }
