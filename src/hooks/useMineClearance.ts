@@ -148,13 +148,12 @@ export default function (optionProps: optionType) {
     for (const item in leiAll) {
       addClass(leiAll[item].id, 'lei')
     }
-    await delay(200)
+    await delay(300)
     reset()
   }
 
   // 鼠标左键 -- 点击事件
   const clickEvent = async (id: string) => {
-    await delay(50)
     if (hasClass(id, 'flag')) {
       return
     }
@@ -186,6 +185,7 @@ export default function (optionProps: optionType) {
     if (leiCount == 0) {
       for (let i = indexX - 1; i <= indexX + 1; i++) {
         for (let j = indexY - 1; j <= indexY + 1; j++) {
+          await delay(0)
           const elem: any = document.querySelector(`#${'s' + i + "-" + 's' + j}`)
           elem && clickEvent(elem.id)
         }
@@ -224,7 +224,7 @@ export default function (optionProps: optionType) {
     } else if (e.which === 3) {
       flagEvent(id)
     }
-  }, 300)
+  }, 400)
 
   onMounted(() => {
     document.oncontextmenu = () => false
