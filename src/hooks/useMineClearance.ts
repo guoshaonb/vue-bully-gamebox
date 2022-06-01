@@ -160,7 +160,7 @@ export default function (optionProps: optionType) {
     // 判断是否踩雷了
     if (hasClass(id, 'is-lei')) {
       gameOver()
-      return ElMessage.error(`踩到雷了，游戏结束！用时：${mineState.timeObj.duration}`)
+      return ElMessage.error(`踩到雷了，游戏结束！`)
     }
     const elem: any = document.querySelector(`#${id}`)
     const count_x = options[difficulty.value].count_x;
@@ -209,7 +209,7 @@ export default function (optionProps: optionType) {
     const leiFlagLen = document.querySelectorAll(".is-lei.flag").length
     if (leiCount == leiFlagLen) {
       gameOver()
-      return ElMessage.success('恭喜你，游戏成功')
+      return ElMessage.success(`恭喜你，游戏成功！用时：${mineState.timeObj.duration}`)
     }
   }
 
@@ -224,7 +224,7 @@ export default function (optionProps: optionType) {
     } else if (e.which === 3) {
       flagEvent(id)
     }
-  }, 400)
+  }, 300)
 
   onMounted(() => {
     document.oncontextmenu = () => false
