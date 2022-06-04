@@ -11,52 +11,59 @@ const router = createRouter({
       component: LAYOUT
     },
     {
-      path: '/',
+      path: '/game',
       name: 'Layout',
-      redirect: '/dashboard',
       component: LAYOUT,
-      meta: {
-        title: '首页'
-      },
       children: [
         {
-          path: '/mineClassics',
+          path: 'mineClassics',
           name: 'mineClassics',
           component: () => import('../views/game/mineClearance/classics.vue')
         },
         {
-          path: '/minePurgatory',
+          path: 'minePurgatory',
           name: 'minePurgatory',
           component: () => import('../views/game/mineClearance/purgatory.vue')
         },
         {
-          path: '/gluttonousSnake',
+          path: 'gluttonousSnake',
           name: 'gluttonousSnake',
           component: () => import('../views/game/gluttonousSnake/index.vue')
         },
         {
-          path: '/battleClassics',
+          path: 'battleClassics',
           name: 'battleClassics',
           component: () => import('../views/game/aircraftBattle/classics.vue')
         },
         {
-          path: '/battlePurgatory',
+          path: 'battlePurgatory',
           name: 'battlePurgatory',
           component: () => import('../views/game/aircraftBattle/purgatory.vue')
         },
         {
-          path: '/tetris',
+          path: 'tetris',
           name: 'tetris',
           component: () => import('../views/game/tetris/index.vue')
         },
         {
-          path: '/five-in-a-row',
+          path: 'five-in-a-row',
           name: 'five-in-a-row',
           component: () => import('../views/game/five-in-a-row/index.vue')
         },
       ]
     }
   ]
+})
+
+
+router.beforeEach((to, from, next) => {
+  if (to.path === '/') {
+    next({
+      path: '/game/mineClassics'
+    })
+  } else {
+    next()
+  } 
 })
 
 export default router

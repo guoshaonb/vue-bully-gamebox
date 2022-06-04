@@ -1,6 +1,6 @@
 <template>
   <div>
-    您的分数为：0【暂未开发】
+    <el-tag>小霸王游戏盒子</el-tag>
   </div>
 </template>
 
